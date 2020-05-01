@@ -1,0 +1,3 @@
+HZ8ZQR366FCUNUMY - alpha advantage
+
+https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=AAL&interval=1min&outputsize=full&apikey=HZ8ZQR366FCUNUMY
