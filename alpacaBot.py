@@ -9,14 +9,10 @@ import time
 
 
 
-
-
 BASE_URL = 'https://paper-api.alpaca.markets'
 API_KEY = 'PKTLTMFZAEDB8GDRDNGU'
 SECRET_KEY = '1Ii6wS5d5ItCvcofkvRRT2qnKuMjzzt6rrLjmbAf'
 DATA_LIST = dict()
-
-
 
 
 
@@ -31,7 +27,6 @@ def getQuoteMinute(symbol):
     global DATA_LIST
     data = api.get_barset(symbol, 'minute', 1)
     x = data[symbol][0]
-    #print(x)
     avg = (x.h + x.l + x.c)/3
     priceVolume = DATA_LIST.get(symbol).vwap.iat[-1] * DATA_LIST.get(symbol)['volume'].sum() + (avg * x.v)
     totalVolume = DATA_LIST.get(symbol)['volume'].sum() + x.v
@@ -66,6 +61,16 @@ def getCurrentTime():
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
 
+def mainMarket():
+    while(not api.get_clock().is_open):
+        print(getCurrentTime())
+        time.sleep(1)
+    
+
+
+
+
+
 def momentumTrack():
     print(getCurrentTime())
     min = 30
@@ -78,10 +83,8 @@ def momentumTrack():
         time.sleep(1)
         print("Current Time =", getCurrentTime())
 
-createDataFrame('AAPL')
-getQuoteMinute('AAPL')
-print(DATA_LIST)
 
+mainMarket()
 
 
 #print(api.get_barset('AAL', 'minute', 390))
