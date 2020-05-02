@@ -28,14 +28,19 @@ account = api.get_account()
 #
 
 def getQuoteMinute(symbol):
-    data = api.get_barset(symbol, 'minute', 325)
+    data = api.get_barset(symbol, 'minute', 1)
     x = data[symbol][0]
     avg = (x.h + x.l + x.c)/3
-    priceVolume = DATA_LIST.get(symbol)['vwap'] * DATA_LIST.get(symbol)['volume'] + (avg * x.v)
-    totalVolume = DATA_LIST.get(symbol)['volume'] + x.v
-    vwap = priceVolume/totalVolume
-    df = pd.DataFrame([x.t, x.o, x.c, x.h, x.l, x.v, vwap])
-    DATA_LIST.get(symbol).append(df)
+    # priceVolume = DATA_LIST.get(symbol)['vwap'] * DATA_LIST.get(symbol)['volume'] + (avg * x.v)
+    # totalVolume = DATA_LIST.get(symbol)['volume'] + x.v
+    vwap = 2 #priceVolume/totalVolume
+    pre = [[x.t, x.o, x.c, x.h, x.l, x.v, vwap]]
+    df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
+    print(df)
+    #DATA_LIST.get(symbol).append(df)
+
+def setUpSymbol(symbol):
+    data = api.get_barset(symbol, 'minute', 300)
 
 
 def createDataFrame(symbol):
@@ -52,7 +57,7 @@ def createDataFrame(symbol):
         print(str(x.h) + " " + str(x.l) + " " + str(x.c) + " " + str(x.t) + " " + str(x.v) + " " + str(vwap))
         pre.append([x.t,x.o,x.c,x.h,x.l,x.v,vwap])
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
-    DATA_LIST.append(symbol : df)
+    DATA_LIST.update(symbol = df)
     return df
 
 def getCurrentTime():
@@ -73,7 +78,7 @@ def momentumTrack():
         print("Current Time =", getCurrentTime())
 
 
-momentumTrack()
+getQuoteMinute('AAPL')
 
 
 #print(api.get_barset('AAL', 'minute', 390))
