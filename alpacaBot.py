@@ -13,6 +13,7 @@ BASE_URL = 'https://paper-api.alpaca.markets'
 API_KEY = 'PKTLTMFZAEDB8GDRDNGU'
 SECRET_KEY = '1Ii6wS5d5ItCvcofkvRRT2qnKuMjzzt6rrLjmbAf'
 DATA_LIST = dict()
+STOCK_LIST = []
 
 
 
@@ -62,26 +63,39 @@ def getCurrentTime():
     return current_time
 
 def mainMarket():
+    global DATA_LIST
     while(not api.get_clock().is_open):
         print(getCurrentTime())
         time.sleep(1)
-    
-
-
-
-
-
-def momentumTrack():
-    print(getCurrentTime())
     min = 30
-    while(True):
+    #INITIALIZE all the stock dataframes for DATA_LIST
+    for x in STOCK_LIST:
+        createDataFrame(x)
+    while(api.get_clock().is_open):
         if int(getCurrentTime()[3:5]) == min:
-            print('make api call')
-            min += 1
+            #update this minutes stocks
+            for x in DATA_LIST.keys():
+                getQuoteMinute(x)
+            # Do all the math and stuff and update the DATA_LIST as needed and make calls on should we buy or sell or what
 
-
-        time.sleep(1)
+            if min == 59:
+                min = 0
+            else:
+                min = getCurrentTime()[3:5] + 1
+            #this is to update the time to make sure we are only making 1 api call per stock per minute
+        time.sleep(1) #so our computers dont get destroyed
         print("Current Time =", getCurrentTime())
+
+
+
+
+
+def momentumTrack(symbol):
+    # add math stuff here for momentum track which will be called in mainMarket
+    global DATA_LIST
+    lastThreeCandles = [DATA_LIST.get(symbol).iloc[-1], DATA_LIST.get(symbol).iloc[-2], DATA_LIST.get(symbol).iloc[-3]]
+    # if 3 candles result in net positive growth esp if pos, neg, pos and 3rd is higher than closing then hard buy
+    # if 3rd candle is very large growth, check net growth in next 2 mins, if pos buy, if not hold off
 
 
 mainMarket()
