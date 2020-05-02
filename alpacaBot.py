@@ -14,7 +14,7 @@ import time
 BASE_URL = 'https://paper-api.alpaca.markets'
 API_KEY = 'PKTLTMFZAEDB8GDRDNGU'
 SECRET_KEY = '1Ii6wS5d5ItCvcofkvRRT2qnKuMjzzt6rrLjmbAf'
-DATA_LIST = {}
+DATA_LIST = dict()
 
 
 
@@ -28,36 +28,37 @@ account = api.get_account()
 #
 
 def getQuoteMinute(symbol):
+    global DATA_LIST
     data = api.get_barset(symbol, 'minute', 1)
     x = data[symbol][0]
+    #print(x)
     avg = (x.h + x.l + x.c)/3
-    # priceVolume = DATA_LIST.get(symbol)['vwap'] * DATA_LIST.get(symbol)['volume'] + (avg * x.v)
-    # totalVolume = DATA_LIST.get(symbol)['volume'] + x.v
-    vwap = 2 #priceVolume/totalVolume
+    priceVolume = DATA_LIST.get(symbol).vwap.iat[-1] * DATA_LIST.get(symbol)['volume'].sum() + (avg * x.v)
+    totalVolume = DATA_LIST.get(symbol)['volume'].sum() + x.v
+    vwap = priceVolume/totalVolume
     pre = [[x.t, x.o, x.c, x.h, x.l, x.v, vwap]]
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
     print(df)
-    #DATA_LIST.get(symbol).append(df)
+    print(DATA_LIST.get(symbol))
+    DATA_LIST = DATA_LIST.get(symbol).append(df, ignore_index = True)
 
-def setUpSymbol(symbol):
-    data = api.get_barset(symbol, 'minute', 300)
 
 
 def createDataFrame(symbol):
-    data = api.get_barset(symbol, 'minute', 325)
+    data = api.get_barset(symbol, 'minute', 1)
     pre = []
     totalVolume = 0
     priceVolume = 0
 
-    for x in data['QEP']:
+    for x in data[symbol]:
         avg = (x.h + x.l + x.c)/3
         priceVolume = priceVolume + (avg * x.v)
         totalVolume = totalVolume + x.v
         vwap = priceVolume/totalVolume
-        print(str(x.h) + " " + str(x.l) + " " + str(x.c) + " " + str(x.t) + " " + str(x.v) + " " + str(vwap))
+        #print(str(x.h) + " " + str(x.l) + " " + str(x.c) + " " + str(x.t) + " " + str(x.v) + " " + str(vwap))
         pre.append([x.t,x.o,x.c,x.h,x.l,x.v,vwap])
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
-    DATA_LIST.update(symbol = df)
+    DATA_LIST[symbol] = df
     return df
 
 def getCurrentTime():
@@ -77,8 +78,10 @@ def momentumTrack():
         time.sleep(1)
         print("Current Time =", getCurrentTime())
 
-
+createDataFrame('AAPL')
 getQuoteMinute('AAPL')
+print(DATA_LIST)
+
 
 
 #print(api.get_barset('AAL', 'minute', 390))
