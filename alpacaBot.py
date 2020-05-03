@@ -132,6 +132,29 @@ def quadRegressor(dftemp, metric):
     plt.show()
     return r2_value
 
+def quadRegressorTime(dftemp, metric, timeInterval):
+    #Getting R-squared for quadratic regression for time and another metric for last timeInterval minutes
+    timeListTs = dftemp['time'].tolist()
+    timeListInt = []
+    z = 0
+    closeListUncut = dftemp[metric].tolist()
+    closeList = []
+    j = len(closeListUncut)
+    while(z<timeInterval):
+        timeListInt.append(z)
+        print(j-(timeInterval-z))
+        closeList.append(closeListUncut[j-(timeInterval-z)])
+        z=z+1
+    print(len(closeList))
+    print(len(timeListInt))
+    plt.plot(timeListInt, closeList, 'o')
+    trend = np.polyfit(timeListInt, closeList, 2)
+    trendpoly = np.poly1d(trend)
+    r2_value = r2_score(closeList, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.show()
+    return r2_value
 
 def momentumTrack():
     print(getCurrentTime())
@@ -149,7 +172,7 @@ df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
 #print(DATA_LIST)
-print(linearRegressorTime(df1, 'close', 10))
+print(quadRegressorTime(df1, 'close', 10))
 
 #print(quadRegressor(df1, 'low'))
 
