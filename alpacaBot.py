@@ -90,6 +90,29 @@ def linearRegressor(dftemp, metric):
     print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
     return r_value**2
 
+def linearRegressorTime(dftemp, metric, timeInterval):
+    #Getting R-squared of a linear regression for time and another metric
+    timeListTs = dftemp['time'].tolist()
+    timeListInt = []
+    i = timeInterval
+    z = 0
+    closeListUncut = dftemp[metric].tolist()
+    closeList = []
+    while(z<timeInterval):
+        timeListInt.append(z)
+        closeList.append(closeListUncut[z])
+        z=z+1
+    #print(timeListTs)
+    #print(closeList)
+    plt.plot(timeListInt, closeList, 'o')
+    trend = np.polyfit(timeListInt, closeList, 1)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
+    trendpoly = np.poly1d(trend)
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.show()
+    print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
+    return r_value**2
+
 def quadRegressor(dftemp, metric):
     #Getting R-squared for quadratic regression for time and another metric
     timeListTs = dftemp['time'].tolist()
@@ -125,9 +148,9 @@ df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
 #print(DATA_LIST)
-print(linearRegressor(df1, 'high'))
+print(linearRegressorTime(df1, 'high', 3))
 
-print(quadRegressor(df1, 'low'))
+#print(quadRegressor(df1, 'low'))
 
 
 
