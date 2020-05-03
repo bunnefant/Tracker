@@ -89,6 +89,9 @@ def mainMarket():
 
 
 
+def resistanceCalc(symbol):
+    
+
 
 def momentumTrack(symbol):
     # add math stuff here for momentum track which will be called in mainMarket
