@@ -42,14 +42,14 @@ def getQuoteMinute(symbol):
     vwap = priceVolume/totalVolume
     pre = [[x.t, x.o, x.c, x.h, x.l, x.v, vwap]]
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
-    print(df)
-    print(DATA_LIST.get(symbol))
+    #print(df)
+    #print(DATA_LIST.get(symbol))
     DATA_LIST = DATA_LIST.get(symbol).append(df, ignore_index = True)
 
 
 
 def createDataFrame(symbol):
-    data = api.get_barset(symbol, 'minute', 30)
+    data = api.get_barset(symbol, 'minute', 325)
     pre = []
     totalVolume = 0
     priceVolume = 0
@@ -71,7 +71,7 @@ def getCurrentTime():
     return current_time
 
 def linearRegressor(dftemp, metric):
-    #Getting R-squared of a linear regression
+    #Getting R-squared of a linear regression for time and another metric
     timeListTs = dftemp['time'].tolist()
     timeListInt = []
     i = 0
@@ -91,6 +91,7 @@ def linearRegressor(dftemp, metric):
     return r_value**2
 
 def quadRegressor(dftemp, metric):
+    #Getting R-squared for quadratic regression for time and another metric
     timeListTs = dftemp['time'].tolist()
     timeListInt = []
     i = 0
@@ -98,21 +99,14 @@ def quadRegressor(dftemp, metric):
         timeListInt.append(i)
         i=i+1
     closeList = dftemp[metric].tolist()
-    #print(timeListTs)
-    #print(closeList)
     plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 2)
     trendpoly = np.poly1d(trend)
-    print(r2_score(closeList, trendpoly(timeListInt)))
+    r2_value = r2_score(closeList, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
     plt.plot(timeListInt, trendpoly(timeListInt))
     plt.show()
-    return trend
-    #slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
-    #trendpoly = np.poly1d(trend)
-    #plt.plot(timeListInt, trendpoly(timeListInt))
-    #plt.show()
-    #print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
-    #return r_value**2
+    return r2_value
 
 
 def momentumTrack():
@@ -131,9 +125,9 @@ df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
 #print(DATA_LIST)
-#linearR=linearRegressor(df1)
-#print(linearR)
-quadR=quadRegressor(df1, 'low')
+print(linearRegressor(df1, 'high'))
+
+print(quadRegressor(df1, 'low'))
 
 
 
