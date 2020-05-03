@@ -66,13 +66,6 @@ def getCurrentTime():
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
 
-<<<<<<< HEAD
-def mainMarket():
-    global DATA_LIST
-    while(not api.get_clock().is_open):
-        print(getCurrentTime())
-        time.sleep(1)
-=======
 def linearRegressor(dftemp, metric):
     #Getting R-squared of a linear regression for time and another metric
     timeListTs = dftemp['time'].tolist()
@@ -203,7 +196,12 @@ def nDegreeRegressorTime(dftemp, metric, n, timeInterval):
 
 def momentumTrack():
     print(getCurrentTime())
->>>>>>> Trendlines
+
+def mainMarket():
+    global DATA_LIST
+    while(not api.get_clock().is_open):
+        print(getCurrentTime())
+        time.sleep(1)
     min = 30
     #INITIALIZE all the stock dataframes for DATA_LIST
     for x in STOCK_LIST:
@@ -225,8 +223,6 @@ def momentumTrack():
 
 
 
-<<<<<<< HEAD
-=======
 df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
@@ -234,11 +230,10 @@ getQuoteMinute('AAPL')
 print(nDegreeRegressorTime(df1, 'close', 10, 60))
 
 #print(quadRegressor(df1, 'low'))
->>>>>>> Trendlines
 
 def resistanceCalc(symbol):
     global DATA_LIST
-    
+
 
 
 def momentumTrack(symbol):
