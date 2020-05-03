@@ -70,7 +70,7 @@ def getCurrentTime():
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
 
-def linearRegressor(dftemp):
+def linearRegressor(dftemp, metric):
     #Getting R-squared of a linear regression
     timeListTs = dftemp['time'].tolist()
     timeListInt = []
@@ -78,7 +78,7 @@ def linearRegressor(dftemp):
     for ts in timeListTs:
         timeListInt.append(i)
         i=i+1
-    closeList = dftemp['close'].tolist()
+    closeList = dftemp[metric].tolist()
     #print(timeListTs)
     #print(closeList)
     plt.plot(timeListInt, closeList, 'o')
@@ -90,14 +90,14 @@ def linearRegressor(dftemp):
     print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
     return r_value**2
 
-def quadRegressor(dftemp):
+def quadRegressor(dftemp, metric):
     timeListTs = dftemp['time'].tolist()
     timeListInt = []
     i = 0
     for ts in timeListTs:
         timeListInt.append(i)
         i=i+1
-    closeList = dftemp['close'].tolist()
+    closeList = dftemp[metric].tolist()
     #print(timeListTs)
     #print(closeList)
     plt.plot(timeListInt, closeList, 'o')
@@ -133,7 +133,7 @@ getQuoteMinute('AAPL')
 #print(DATA_LIST)
 #linearR=linearRegressor(df1)
 #print(linearR)
-quadR=quadRegressor(df1)
+quadR=quadRegressor(df1, 'low')
 
 
 
