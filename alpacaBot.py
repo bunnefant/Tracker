@@ -87,7 +87,7 @@ def linearRegressor(dftemp, metric):
     trendpoly = np.poly1d(trend)
     plt.plot(timeListInt, trendpoly(timeListInt))
     plt.show()
-    print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
+    #print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
     return r_value**2
 
 def linearRegressorTime(dftemp, metric, timeInterval):
@@ -100,7 +100,7 @@ def linearRegressorTime(dftemp, metric, timeInterval):
     j = len(closeListUncut)
     while(z<timeInterval):
         timeListInt.append(z)
-        print(j-(timeInterval-z))
+        #print(j-(timeInterval-z))
         closeList.append(closeListUncut[j-(timeInterval-z)])
         z=z+1
     #print(timeListTs)
@@ -142,11 +142,11 @@ def quadRegressorTime(dftemp, metric, timeInterval):
     j = len(closeListUncut)
     while(z<timeInterval):
         timeListInt.append(z)
-        print(j-(timeInterval-z))
+        #print(j-(timeInterval-z))
         closeList.append(closeListUncut[j-(timeInterval-z)])
         z=z+1
-    print(len(closeList))
-    print(len(timeListInt))
+    #print(len(closeList))
+    #print(len(timeListInt))
     plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 2)
     trendpoly = np.poly1d(trend)
@@ -184,11 +184,11 @@ def nDegreeRegressorTime(dftemp, metric, n, timeInterval):
     j = len(closeListUncut)
     while(z<timeInterval):
         timeListInt.append(z)
-        print(j-(timeInterval-z))
+        #print(j-(timeInterval-z))
         closeList.append(closeListUncut[j-(timeInterval-z)])
         z=z+1
-    print(len(closeList))
-    print(len(timeListInt))
+    #print(len(closeList))
+    #print(len(timeListInt))
     plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, n)
     trendpoly = np.poly1d(trend)
@@ -197,6 +197,7 @@ def nDegreeRegressorTime(dftemp, metric, n, timeInterval):
     plt.plot(timeListInt, trendpoly(timeListInt))
     plt.show()
     return r2_value
+
 def momentumTrack():
     print(getCurrentTime())
     min = 30
