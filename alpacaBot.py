@@ -156,6 +156,47 @@ def quadRegressorTime(dftemp, metric, timeInterval):
     plt.show()
     return r2_value
 
+def nDegreeRegressor(dftemp, metric, n):
+    #Getting R-squared for nth degree regression for time and another metric
+    timeListTs = dftemp['time'].tolist()
+    timeListInt = []
+    i = 0
+    for ts in timeListTs:
+        timeListInt.append(i)
+        i=i+1
+    closeList = dftemp[metric].tolist()
+    plt.plot(timeListInt, closeList, 'o')
+    trend = np.polyfit(timeListInt, closeList, n)
+    trendpoly = np.poly1d(trend)
+    r2_value = r2_score(closeList, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.show()
+    return r2_value
+
+def nDegreeRegressorTime(dftemp, metric, n, timeInterval):
+    #Getting R-squared for nth degree regression for time and another metric for last timeInterval minutes
+    timeListTs = dftemp['time'].tolist()
+    timeListInt = []
+    z = 0
+    closeListUncut = dftemp[metric].tolist()
+    closeList = []
+    j = len(closeListUncut)
+    while(z<timeInterval):
+        timeListInt.append(z)
+        print(j-(timeInterval-z))
+        closeList.append(closeListUncut[j-(timeInterval-z)])
+        z=z+1
+    print(len(closeList))
+    print(len(timeListInt))
+    plt.plot(timeListInt, closeList, 'o')
+    trend = np.polyfit(timeListInt, closeList, n)
+    trendpoly = np.poly1d(trend)
+    r2_value = r2_score(closeList, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.show()
+    return r2_value
 def momentumTrack():
     print(getCurrentTime())
     min = 30
@@ -172,7 +213,7 @@ df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
 #print(DATA_LIST)
-print(quadRegressorTime(df1, 'close', 10))
+print(nDegreeRegressorTime(df1, 'close', 10, 60))
 
 #print(quadRegressor(df1, 'low'))
 
