@@ -42,7 +42,7 @@ def getQuoteMinute(symbol):
     vwap = priceVolume/totalVolume
     pre = [[x.t, x.o, x.c, x.h, x.l, x.v, vwap]]
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
-    #print(df)
+    print(df)
     #print(DATA_LIST.get(symbol))
     DATA_LIST = DATA_LIST.get(symbol).append(df, ignore_index = True)
 
@@ -91,19 +91,20 @@ def linearRegressor(dftemp, metric):
     return r_value**2
 
 def linearRegressorTime(dftemp, metric, timeInterval):
-    #Getting R-squared of a linear regression for time and another metric
+    #Getting R-squared of a linear regression for time and another metric for last timeInterval minutes
     timeListTs = dftemp['time'].tolist()
     timeListInt = []
-    i = timeInterval
     z = 0
     closeListUncut = dftemp[metric].tolist()
     closeList = []
+    j = len(closeListUncut)
     while(z<timeInterval):
         timeListInt.append(z)
-        closeList.append(closeListUncut[z])
+        print(j-(timeInterval-z))
+        closeList.append(closeListUncut[j-(timeInterval-z)])
         z=z+1
     #print(timeListTs)
-    #print(closeList)
+    print(closeList)
     plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 1)
     slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
@@ -148,7 +149,7 @@ df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
 #print(DATA_LIST)
-print(linearRegressorTime(df1, 'high', 3))
+print(linearRegressorTime(df1, 'close', 10))
 
 #print(quadRegressor(df1, 'low'))
 
