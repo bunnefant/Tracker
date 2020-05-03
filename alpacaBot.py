@@ -6,7 +6,9 @@ import csv
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 import time
-
+import numpy as np
+import datetime as dt
+from scipy import stats
 
 
 
@@ -45,7 +47,7 @@ def getQuoteMinute(symbol):
 
 
 def createDataFrame(symbol):
-    data = api.get_barset(symbol, 'minute', 1)
+    data = api.get_barset(symbol, 'minute', 30)
     pre = []
     totalVolume = 0
     priceVolume = 0
@@ -66,6 +68,50 @@ def getCurrentTime():
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
 
+def linearRegressor(dftemp):
+    #Getting R-squared of a linear regression
+    timeListTs = dftemp['time'].tolist()
+    timeListInt = []
+    i = 0
+    for ts in timeListTs:
+        timeListInt.append(i)
+        i=i+1
+    closeList = dftemp['close'].tolist()
+    #print(timeListTs)
+    #print(closeList)
+    plt.plot(timeListInt, closeList, 'o')
+    trend = np.polyfit(timeListInt, closeList, 1)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
+    trendpoly = np.poly1d(trend)
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.show()
+    print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
+    return r_value**2
+
+def quadRegressor(dftemp):
+    timeListTs = dftemp['time'].tolist()
+    timeListInt = []
+    i = 0
+    for ts in timeListTs:
+        timeListInt.append(i)
+        i=i+1
+    closeList = dftemp['close'].tolist()
+    #print(timeListTs)
+    #print(closeList)
+    plt.plot(timeListInt, closeList, 'o')
+    trend = np.polyfit(timeListInt, closeList, 2)
+    trendpoly = np.poly1d(trend)
+    plt.plot(timeListInt, trendpoly(timeListInt))
+    plt.show()
+    return trend
+    #slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
+    #trendpoly = np.poly1d(trend)
+    #plt.plot(timeListInt, trendpoly(timeListInt))
+    #plt.show()
+    #print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
+    #return r_value**2
+
+
 def momentumTrack():
     print(getCurrentTime())
     min = 30
@@ -78,9 +124,13 @@ def momentumTrack():
         time.sleep(1)
         print("Current Time =", getCurrentTime())
 
-createDataFrame('AAPL')
+df1 = createDataFrame('AAPL')
+#print(df1)
 getQuoteMinute('AAPL')
-print(DATA_LIST)
+#print(DATA_LIST)
+#linearR=linearRegressor(df1)
+#print(linearR)
+quadR=quadRegressor(df1)
 
 
 
