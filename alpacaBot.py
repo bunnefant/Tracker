@@ -90,6 +90,7 @@ def mainMarket():
 
 
 def resistanceCalc(symbol):
+    global DATA_LIST
     
 
 
