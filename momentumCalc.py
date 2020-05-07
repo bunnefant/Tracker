@@ -8,6 +8,7 @@ def intialResistanceCalc(symbol, DATA_LIST):
 
 
 
+# update support and resistances after each min
 def minuteUpdate(symbol, DATA_LIST):
 
 
