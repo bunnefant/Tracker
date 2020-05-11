@@ -2,7 +2,7 @@ import alpaca_trade_api as tradeapi
 import requests
 import json
 import pandas as pd
-import csv
+from collections import deque
 from regressionCalc import *
 
 
@@ -10,7 +10,7 @@ from regressionCalc import *
 BASE_URL = 'https://paper-api.alpaca.markets'
 API_KEY = 'PKTLTMFZAEDB8GDRDNGU'
 SECRET_KEY = '1Ii6wS5d5ItCvcofkvRRT2qnKuMjzzt6rrLjmbAf'
-DATA_LIST = dict()
+DATA_LIST = {}
 STOCK_LIST = []
 
 
@@ -27,18 +27,19 @@ def getQuoteMinute(symbol):
     data = api.get_barset(symbol, 'minute', 1)
     x = data[symbol][0]
     avg = (x.h + x.l + x.c)/3
-    priceVolume = DATA_LIST.get(symbol).vwap.iat[-1] * DATA_LIST.get(symbol)['volume'].sum() + (avg * x.v)
-    totalVolume = DATA_LIST.get(symbol)['volume'].sum() + x.v
+    priceVolume = DATA_LIST.get(symbol)[0].vwap.iat[-1] * DATA_LIST.get(symbol)[0]['volume'].sum() + (avg * x.v)
+    totalVolume = DATA_LIST.get(symbol)[0]['volume'].sum() + x.v
     vwap = priceVolume/totalVolume
     pre = [[x.t, x.o, x.c, x.h, x.l, x.v, vwap]]
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
-    print(df)
+    #print(df)
     #print(DATA_LIST.get(symbol))
-    DATA_LIST = DATA_LIST.get(symbol).append(df, ignore_index = True)
+    DATA_LIST = DATA_LIST.get(symbol)[0].append(df, ignore_index = True)
 
 
 
 def createDataFrame(symbol):
+    global DATA_LIST
     data = api.get_barset(symbol, 'minute', 325)
     pre = []
     totalVolume = 0
@@ -52,7 +53,11 @@ def createDataFrame(symbol):
         #print(str(x.h) + " " + str(x.l) + " " + str(x.c) + " " + str(x.t) + " " + str(x.v) + " " + str(vwap))
         pre.append([x.t,x.o,x.c,x.h,x.l,x.v,vwap])
     df = pd.DataFrame(pre,columns = ['time', 'open', 'close', 'high', 'low', 'volume', 'vwap'])
-    DATA_LIST[symbol] = df
+    resistanceStack = deque()
+    supportStack = deque()
+    DATA_LIST = DATA_LIST.update({symbol:[df, resistanceStack, supportStack]})
+    print(DATA_LIST)
+    #DATA_LIST[symbol] =
     return df
 
 def getCurrentTime():
@@ -92,6 +97,8 @@ def mainMarket():
 df1 = createDataFrame('AAPL')
 #print(df1)
 getQuoteMinute('AAPL')
+print(df1)
+print(DATA_LIST.keys())
 #print(DATA_LIST)
 print(nDegreeRegressorTime(df1, 'close', 10, 60))
 

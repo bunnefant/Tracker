@@ -2,6 +2,9 @@ import pandas as pd
 
 
 
+
+
+
 # calculate all the support and resistance lines based off of the day befores data
 def intialResistanceCalc(symbol, DATA_LIST):
     df = DATA_LIST.get(symbol)
@@ -9,8 +12,13 @@ def intialResistanceCalc(symbol, DATA_LIST):
 
 
 # update support and resistances after each min
-def minuteUpdate(symbol, DATA_LIST):
+def minuteUpdate(DATA_LIST):
 
+def marketOpen(DATA_LIST):
+
+
+
+def processNewData(DATA_LIST):
 
 
 
