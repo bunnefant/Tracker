@@ -9,7 +9,7 @@ from scipy import stats
 from sklearn.metrics import r2_score
 
 def linearRegressor(dftemp, metric):
-    #Getting R-squared of a linear regression for time and another metric
+    #Getting R-squared of a linear regression using metric, returns pair of estimated price at current time and r squared
     timeListTs = dftemp['time'].tolist()
     timeListInt = []
     i = 0
@@ -25,6 +25,7 @@ def linearRegressor(dftemp, metric):
     trendpoly = np.poly1d(trend)
     plt.plot(timeListInt, trendpoly(timeListInt))
     plt.show()
+    estimatedPrice = (slope*i)+intercept
     #print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
     return r_value**2
 

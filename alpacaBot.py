@@ -109,6 +109,9 @@ def momentumTrack(symbol):
     # if 3 candles result in net positive growth esp if pos, neg, pos and 3rd is higher than closing then hard buy
     # if 3rd candle is very large growth, check net growth in next 2 mins, if pos buy, if not hold off
 
+def regressionBreak(symbol)
+    #checks if the stock is doing better than the linear regression
+    global DATA_LIST
 
 mainMarket()
 
