@@ -1,12 +1,20 @@
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
+from matplotlib import *
 import time
 import numpy as np
 import datetime as dt
 from scipy import stats
 from sklearn.metrics import r2_score
 from scipy import stats
-from sklearn.metrics import r2_score
+from scipy.signal import argrelextrema
+
+def maxima(regression):
+    crit = regression.deriv().r
+    criticalValues = crit[crit.imag==0].real
+    secDerivTest = regression.deriv(2)(criticalValues)
+    xMaxima = criticalValues[secDerivTest<0]
+    return xMaxima
 
 def linearRegressor(dftemp, metric):
     #Getting R-squared of a linear regression using metric, returns pair of estimated price at current time and r squared
@@ -19,15 +27,17 @@ def linearRegressor(dftemp, metric):
     closeList = dftemp[metric].tolist()
     #print(timeListTs)
     #print(closeList)
-    plt.plot(timeListInt, closeList, 'o')
+    #plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 1)
     slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
+    trendStats = (slope, intercept, r2_value)
+    r2_value = r_value**2
     trendpoly = np.poly1d(trend)
-    plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.show()
-    estimatedPrice = (slope*i)+intercept
+    print(trendpoly)
+    #plt.plot(timeListInt, trendpoly(timeListInt))
+    #plt.show()
     #print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
-    return r_value**2
+    return trendStats
 
 def linearRegressorTime(dftemp, metric, timeInterval):
     #Getting R-squared of a linear regression for time and another metric for last timeInterval minutes
@@ -44,14 +54,16 @@ def linearRegressorTime(dftemp, metric, timeInterval):
         z=z+1
     #print(timeListTs)
     print(closeList)
-    plt.plot(timeListInt, closeList, 'o')
+    #plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 1)
     slope, intercept, r_value, p_value, std_err = stats.linregress(timeListInt, closeList)
+    r2_value = r_value**2
+    trendStats = (slope, intercept, r2_value)
     trendpoly = np.poly1d(trend)
-    plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.show()
-    print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
-    return r_value**2
+    #plt.plot(timeListInt, trendpoly(timeListInt))
+    #plt.show()
+    #print(str(slope)+" "+str(intercept)+" "+str(r_value)+" "+str(std_err))
+    return trendStats
 
 def quadRegressor(dftemp, metric):
     #Getting R-squared for quadratic regression for time and another metric
@@ -64,10 +76,12 @@ def quadRegressor(dftemp, metric):
     closeList = dftemp[metric].tolist()
     plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 2)
+    print(trend)
     trendpoly = np.poly1d(trend)
     r2_value = r2_score(closeList, trendpoly(timeListInt))
+    print(trendpoly)
     plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.plot(timeListInt, trendpoly(timeListInt))
+    print(maxima(trendpoly))
     plt.show()
     return r2_value
 
@@ -86,13 +100,12 @@ def quadRegressorTime(dftemp, metric, timeInterval):
         z=z+1
     #print(len(closeList))
     #print(len(timeListInt))
-    plt.plot(timeListInt, closeList, 'o')
+    #plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, 2)
     trendpoly = np.poly1d(trend)
     r2_value = r2_score(closeList, trendpoly(timeListInt))
-    plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.show()
+    #plt.plot(timeListInt, trendpoly(timeListInt))
+    #plt.show()
     return r2_value
 
 def nDegreeRegressor(dftemp, metric, n):
@@ -109,7 +122,9 @@ def nDegreeRegressor(dftemp, metric, n):
     trendpoly = np.poly1d(trend)
     r2_value = r2_score(closeList, trendpoly(timeListInt))
     plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.plot(timeListInt, trendpoly(timeListInt))
+    maximum = maxima(trendpoly)
+    for i in maximum:
+        plt.plot(i, trendpoly(i), 'rs')
     plt.show()
     return r2_value
 
@@ -128,11 +143,11 @@ def nDegreeRegressorTime(dftemp, metric, n, timeInterval):
         z=z+1
     #print(len(closeList))
     #print(len(timeListInt))
-    plt.plot(timeListInt, closeList, 'o')
+    #plt.plot(timeListInt, closeList, 'o')
     trend = np.polyfit(timeListInt, closeList, n)
     trendpoly = np.poly1d(trend)
     r2_value = r2_score(closeList, trendpoly(timeListInt))
-    plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.plot(timeListInt, trendpoly(timeListInt))
-    plt.show()
+    #plt.plot(timeListInt, trendpoly(timeListInt))
+    #plt.plot(timeListInt, trendpoly(timeListInt))
+    #plt.show()
     return r2_value
