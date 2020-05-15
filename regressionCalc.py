@@ -16,6 +16,13 @@ def maxima(regression):
     xMaxima = criticalValues[secDerivTest<0]
     return xMaxima
 
+def minima(regression):
+    crit = regression.deriv().r
+    criticalValues = crit[crit.imag==0].real
+    secDerivTest = regression.deriv(2)(criticalValues)
+    xMinima = criticalValues[secDerivTest>0]
+    return xMinima
+
 def linearRegressor(dftemp, metric):
     #Getting R-squared of a linear regression using metric, returns pair of estimated price at current time and r squared
     timeListTs = dftemp['time'].tolist()
@@ -125,6 +132,9 @@ def nDegreeRegressor(dftemp, metric, n):
     maximum = maxima(trendpoly)
     for i in maximum:
         plt.plot(i, trendpoly(i), 'rs')
+    minimum = minima(trendpoly)
+    for i in minimum:
+        plt.plot(i, trendpoly(i), '^k')
     plt.show()
     return r2_value
 
