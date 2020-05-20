@@ -9,8 +9,8 @@ from regressionCalc import *
 import asyncio
 import os
 import sys
+import websocket
 
-import argparse
 
 from datetime import datetime
 
@@ -83,8 +83,6 @@ def getCurrentTime():
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
 
-def momentumTrack():
-    print(getCurrentTime())
 
 def mainMarket():
     global DATA_LIST
@@ -114,22 +112,27 @@ def mainMarket():
         time.sleep(1) #so our computers dont get destroyed
         print("Current Time =", getCurrentTime())
 
+mainMarket()
+# @conn.on(r'^AM$')
+# async def on_minute_bars(conn, channel, bar):
+#     print('bars', bar)
+#     print("Current Time =", getCurrentTime())
 
-@conn.on(r'^AM$')
-async def on_minute_bars(conn, channel, bar):
-    print('bars', bar)
+# @conn.on(r'^A$')
+# async def on_second_bars(conn, channel, bar):
+#     print('hello')
+#     #print('bars', bar)
+#     # ts = int(bar.s)
+#     # print(ts)
+#     #print("Current Time =", getCurrentTime())
+#
+# def testStream():
+#     global conn
+#     print('hello')
+#     conn.run(['A.APT'])
+#     print('hello')
 
-@conn.on(r'^A$')
-async def on_second_bars(conn, channel, bar):
-    print('bars', bar)
 
-def testStream():
-    global conn
-    print('hello')
-    conn.run(['AM.AAL'])
-    print('hello')
-
-testStream()
 
 # mainMarket()
 #print(df1)
